@@ -49,6 +49,22 @@ func (s *Storage) Deposit(ctx context.Context, userId uuid.UUID, amount int) (do
 	return ui, nil
 }
 
+func (s *Storage) Withdraw(ctx context.Context, userId uuid.UUID, amount int) (domain.UserInfo, error) {
+	s.Lock()
+	defer s.Unlock()
+
+	ui, ok := s.db[userId]
+	if !ok {
+		return domain.UserInfo{}, errors.New("user id does not exist")
+	}
+
+	ui.Balance -= amount
+
+	s.db[userId] = ui
+
+	return ui, nil
+}
+
 func (s *Storage) GetUser(ctx context.Context, userId uuid.UUID) (domain.UserInfo, error) {
 	s.RLock()
 	defer s.RUnlock()
