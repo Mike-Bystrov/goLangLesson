@@ -12,11 +12,11 @@ type Server struct {
 	*http.Server
 }
 
-func NewPublicServer(
+func NewServer(
 	oplatiService *oplati.Service,
 	addr string,
 	mws ...func(next http.Handler) http.Handler,
-) *Server {
+) (*Server, *http.ServeMux) {
 	mux := http.NewServeMux()
 
 	httpServer := http.Server{
@@ -28,6 +28,16 @@ func NewPublicServer(
 		oplatiService: oplatiService,
 		Server:        &httpServer,
 	}
+
+	return server, mux
+}
+
+func NewPublicServer(
+	oplatiService *oplati.Service,
+	addr string,
+	mws ...func(next http.Handler) http.Handler,
+) *Server {
+	server, mux := NewServer(oplatiService, addr, mws...)
 
 	mux.HandleFunc("POST /transfer", server.newUserHandler)
 	mux.HandleFunc("POST /newUser", server.newUserHandler)
@@ -43,19 +53,8 @@ func NewPrivateServer(
 	addr string,
 	mws ...func(next http.Handler) http.Handler,
 ) *Server {
-	mux := http.NewServeMux()
+	server, mux := NewServer(oplatiService, addr, mws...)
 
-	httpServer := http.Server{
-		Addr:    addr,
-		Handler: hmiddlewares.UseMiddlewares(mux, mws),
-	}
-
-	server := &Server{
-		oplatiService: oplatiService,
-		Server:        &httpServer,
-	}
-
-	mux.HandleFunc("POST /newUser", server.newUserHandler)
 	mux.HandleFunc("POST /getAllUsers", server.getAllUsersHandler)
 
 	return server
