@@ -8,7 +8,7 @@ import (
 )
 
 func (s *Server) withdrawHandler(w http.ResponseWriter, r *http.Request) {
-	request := DepositRequest{}
+	request := domain.ChangeBalanceRequest{}
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

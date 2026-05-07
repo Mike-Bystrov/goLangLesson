@@ -7,3 +7,8 @@ type UserInfo struct {
 	Name    string    `json:"name"`
 	Balance int       `json:"balance"`
 }
+
+type ChangeBalanceRequest struct {
+	Id     uuid.UUID `json:"id"`
+	Amount int       `json:"amount"`
+}

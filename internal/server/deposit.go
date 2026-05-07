@@ -4,17 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/thnxvlad/oplati/internal/domain"
 )
 
-type DepositRequest struct {
-	Id     uuid.UUID `json:"id"`
-	Amount int       `json:"amount"`
-}
-
 func (s *Server) depositHandler(w http.ResponseWriter, r *http.Request) {
-	request := DepositRequest{}
+	request := domain.ChangeBalanceRequest{}
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
