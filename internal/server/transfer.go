@@ -14,7 +14,7 @@ type TransferRequest struct {
 	Amount     int       `json:"amount"`
 }
 
-func (s *Server) Transfer(w http.ResponseWriter, r *http.Request) {
+func (s *Server) transferHandler(w http.ResponseWriter, r *http.Request) {
 	request := TransferRequest{}
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
