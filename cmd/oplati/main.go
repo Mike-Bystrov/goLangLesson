@@ -29,9 +29,8 @@ func init() {
 
 func main() {
 	oplatiService := oplati.New(inmemory.NewStorage())
-	// TODO: доделать public server
 	publicServer := hserver.NewPublicServer(oplatiService, publicAddr, hmiddlewares.LoggingMiddleware)
-	//privateServer := hserver.NewPrivateServer(oplatiService, privateAddr, hmiddlewares.LoggingMiddleware)
+	privateServer := hserver.NewPrivateServer(oplatiService, privateAddr, hmiddlewares.LoggingMiddleware)
 
 	go func() {
 		log.Info().Str("addr", publicAddr).Msg("public server started...")
@@ -41,13 +40,13 @@ func main() {
 		}
 	}()
 
-	// go func() {
-	// 	log.Info().Str("addr", privateAddr).Msg("private server started...")
-	// 	err := privateServer.ListenAndServe()
-	// 	if err != nil {
-	// 		log.Err(err).Msg("failed to start private server")
-	// 	}
-	// }()
+	go func() {
+		log.Info().Str("addr", privateAddr).Msg("private server started...")
+		err := privateServer.ListenAndServe()
+		if err != nil {
+			log.Err(err).Msg("failed to start private server")
+		}
+	}()
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()

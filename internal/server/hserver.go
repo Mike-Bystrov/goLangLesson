@@ -29,17 +29,11 @@ func NewPublicServer(
 		Server:        &httpServer,
 	}
 
-	//  TODO: пополнить баланс -- +
-	//  TODO: просмотреть информацию о конкретном пользователе по id -- +
-	//  TODO: снять деньги с баланса -- +
-
-	//  TODO: перевести сумму денег с одного пользователя на другой
-
-	// TODO: доделать public server
+	mux.HandleFunc("POST /transfer", server.newUserHandler)
 	mux.HandleFunc("POST /newUser", server.newUserHandler)
 	mux.HandleFunc("POST /deposit", server.depositHandler)
 	mux.HandleFunc("POST /withdraw", server.withdrawHandler)
-	mux.HandleFunc("POST /getInfo", server.getInfoHandler)
+	mux.HandleFunc("POST /getInfo/{id}", server.getInfoHandler)
 
 	return server
 }
@@ -62,11 +56,7 @@ func NewPrivateServer(
 	}
 
 	mux.HandleFunc("POST /newUser", server.newUserHandler)
-
-	mux.HandleFunc("POST /deposit", server.depositHandler)
-	mux.HandleFunc("POST /getInfo", server.getInfoHandler)
-	mux.HandleFunc("POST /withdraw", server.withdrawHandler)
-	//  TODO: просмотреть информацию о всех пользователях
+	mux.HandleFunc("POST /getAllUsers", server.getAllUsersHandler)
 
 	return server
 }

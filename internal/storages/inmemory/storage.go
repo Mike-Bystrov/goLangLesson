@@ -76,3 +76,39 @@ func (s *Storage) GetUser(ctx context.Context, userId uuid.UUID) (domain.UserInf
 
 	return ui, nil
 }
+
+func (s *Storage) GetAllUsers(ctx context.Context) ([]domain.UserInfo, error) {
+	s.RLock()
+	defer s.RUnlock()
+
+	users := make([]domain.UserInfo, 0, len(s.db))
+
+	for _, ui := range s.db {
+		users = append(users, ui)
+	}
+
+	return users, nil
+}
+
+func (s *Storage) Transfer(ctx context.Context, userIDFrom uuid.UUID, userIDTo uuid.UUID, amount int) ([]domain.UserInfo, error) {
+	s.Lock()
+	defer s.Unlock()
+	ui1, ok1 := s.db[userIDFrom]
+	ui2, ok2 := s.db[userIDTo]
+
+	if !ok1 {
+		return []domain.UserInfo{}, errors.New("there is no user with id: " + userIDFrom.String())
+	}
+	if !ok2 {
+		return []domain.UserInfo{}, errors.New("there is no user with id: " + userIDTo.String())
+	}
+
+	if ui1.Balance-amount < 0 {
+		return []domain.UserInfo{}, errors.New("Not enough money for transfer")
+	}
+
+	s.Withdraw(ctx, userIDFrom, amount)
+	s.Deposit(ctx, userIDTo, amount)
+
+	return []domain.UserInfo{ui1, ui2}, nil
+}

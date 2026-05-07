@@ -12,15 +12,15 @@ type GetInfoRequest struct {
 }
 
 func (s *Server) getInfoHandler(w http.ResponseWriter, r *http.Request) {
-	request := GetInfoRequest{}
+	idStr := r.PathValue("id")
+	id, err := uuid.Parse(idStr)
 
-	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	ui, err := s.oplatiService.GetUser(r.Context(), request.Id)
+	ui, err := s.oplatiService.GetUser(r.Context(), id)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
