@@ -3,6 +3,8 @@ package hserver
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/thnxvlad/oplati/internal/domain"
 )
 
 func (s *Server) withdrawHandler(w http.ResponseWriter, r *http.Request) {
@@ -20,7 +22,7 @@ func (s *Server) withdrawHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := NewUserResponse{
+	response := domain.UserInfo{
 		Id:      ui.Id,
 		Name:    ui.Name,
 		Balance: ui.Balance,

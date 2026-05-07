@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/thnxvlad/oplati/internal/domain"
 )
 
 type TransferRequest struct {
@@ -28,7 +29,7 @@ func (s *Server) Transfer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//будет потом изменено, но пока так
-	response := NewUserResponse{
+	response := domain.UserInfo{
 		Id:      users[1].Id,
 		Name:    users[1].Name,
 		Balance: users[1].Balance,

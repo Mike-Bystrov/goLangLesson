@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/thnxvlad/oplati/internal/domain"
 )
 
 type DepositRequest struct {
@@ -27,7 +28,7 @@ func (s *Server) depositHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := NewUserResponse{
+	response := domain.UserInfo{
 		Id:      ui.Id,
 		Name:    ui.Name,
 		Balance: ui.Balance,

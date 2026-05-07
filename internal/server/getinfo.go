@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/thnxvlad/oplati/internal/domain"
 )
 
 func (s *Server) getInfoHandler(w http.ResponseWriter, r *http.Request) {
@@ -23,7 +24,7 @@ func (s *Server) getInfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := NewUserResponse{
+	response := domain.UserInfo{
 		Id:      ui.Id,
 		Name:    ui.Name,
 		Balance: ui.Balance,
