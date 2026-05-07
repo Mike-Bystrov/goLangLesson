@@ -20,6 +20,17 @@ func NewStorage() *Storage {
 	}
 }
 
+func AddMoney(balance int, amount int) (int, error) {
+	return balance + amount, nil
+}
+
+func MinusMoney(balance int, amount int) (int, error) {
+	if balance-amount < 0 {
+		return balance, errors.New("not enough money")
+	}
+	return balance - amount, nil
+}
+
 func (s *Storage) CreateUser(ctx context.Context, ui domain.UserInfo) error {
 	s.Lock()
 	defer s.Unlock()
@@ -33,7 +44,7 @@ func (s *Storage) CreateUser(ctx context.Context, ui domain.UserInfo) error {
 	return nil
 }
 
-func (s *Storage) Deposit(ctx context.Context, userId uuid.UUID, amount int) (domain.UserInfo, error) {
+func (s *Storage) ChangeBalance(ctx context.Context, userId uuid.UUID, amount int, fn func(balance int, amount int) (int, error)) (domain.UserInfo, error) {
 	s.Lock()
 	defer s.Unlock()
 
@@ -41,28 +52,11 @@ func (s *Storage) Deposit(ctx context.Context, userId uuid.UUID, amount int) (do
 	if !ok {
 		return domain.UserInfo{}, errors.New("user id does not exist")
 	}
-
-	ui.Balance += amount
-
+	balance, err := fn(ui.Balance, amount)
+	ui.Balance = balance
 	s.db[userId] = ui
 
-	return ui, nil
-}
-
-func (s *Storage) Withdraw(ctx context.Context, userId uuid.UUID, amount int) (domain.UserInfo, error) {
-	s.Lock()
-	defer s.Unlock()
-
-	ui, ok := s.db[userId]
-	if !ok {
-		return domain.UserInfo{}, errors.New("user id does not exist")
-	}
-
-	ui.Balance -= amount
-
-	s.db[userId] = ui
-
-	return ui, nil
+	return ui, err
 }
 
 func (s *Storage) GetUser(ctx context.Context, userId uuid.UUID) (domain.UserInfo, error) {
@@ -107,8 +101,8 @@ func (s *Storage) Transfer(ctx context.Context, userIDFrom uuid.UUID, userIDTo u
 		return []domain.UserInfo{}, errors.New("Not enough money for transfer")
 	}
 
-	s.Withdraw(ctx, userIDFrom, amount)
-	s.Deposit(ctx, userIDTo, amount)
+	s.ChangeBalance(ctx, userIDFrom, amount, MinusMoney)
+	s.ChangeBalance(ctx, userIDTo, amount, AddMoney)
 
 	return []domain.UserInfo{ui1, ui2}, nil
 }
