@@ -7,10 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type GetInfoRequest struct {
-	Id uuid.UUID `json:"id"`
-}
-
 func (s *Server) getInfoHandler(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := uuid.Parse(idStr)
