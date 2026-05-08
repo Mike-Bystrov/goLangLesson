@@ -21,6 +21,7 @@ func (s *Server) transferHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	users, err := s.oplatiService.Transfer(r.Context(), request.UserIdFrom, request.UserIdTo, request.Amount)
 
 	if err != nil {

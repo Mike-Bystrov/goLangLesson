@@ -85,8 +85,6 @@ func (s *Storage) GetAllUsers(ctx context.Context) ([]domain.UserInfo, error) {
 }
 
 func (s *Storage) Transfer(ctx context.Context, userIDFrom uuid.UUID, userIDTo uuid.UUID, amount int) ([]domain.UserInfo, error) {
-	s.Lock()
-	defer s.Unlock()
 	ui1, ok1 := s.db[userIDFrom]
 	ui2, ok2 := s.db[userIDTo]
 
