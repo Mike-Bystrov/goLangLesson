@@ -22,7 +22,6 @@ type OplatiDatabase interface {
 	GetUser(ctx context.Context, userId uuid.UUID) (domain.UserInfo, error)
 	GetAllUsers(ctx context.Context) ([]domain.UserInfo, error)
 	Transfer(ctx context.Context, userIDFirst uuid.UUID, userIDSecond uuid.UUID, amount int) error
-	ChangeBalance(ctx context.Context, userId uuid.UUID, amount int, fn func(balance int, amount int) (int, error)) (domain.UserInfo, error)
 	Deposit(ctx context.Context, userId uuid.UUID, amount int) (domain.UserInfo, error)
 	Withdraw(ctx context.Context, userId uuid.UUID, amount int) (domain.UserInfo, error)
 
