@@ -91,8 +91,11 @@ func (s *Storage) GetAllUsers(ctx context.Context) ([]domain.UserInfo, error) {
 }
 
 func (s *Storage) Transfer(ctx context.Context, userIDFrom uuid.UUID, userIDTo uuid.UUID, amount int) error {
+	s.Lock()
+	defer s.Unlock()
+
 	ui1, ok1 := s.db[userIDFrom]
-	_, ok2 := s.db[userIDTo]
+	ui2, ok2 := s.db[userIDTo]
 
 	if !ok1 {
 		return errors.New("there is no user with id: " + userIDFrom.String())
@@ -105,8 +108,11 @@ func (s *Storage) Transfer(ctx context.Context, userIDFrom uuid.UUID, userIDTo u
 		return errors.New("Not enough money for transfer")
 	}
 
-	s.ChangeBalance(ctx, userIDFrom, amount, MinusMoney)
-	s.ChangeBalance(ctx, userIDTo, amount, AddMoney)
+	ui1.Balance -= amount
+	ui2.Balance += amount
+
+	s.db[userIDFrom] = ui1
+	s.db[userIDTo] = ui2
 
 	return nil
 }
