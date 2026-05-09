@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
-	"github.com/thnxvlad/oplati/internal/domain"
 )
 
 type TransferRequest struct {
@@ -22,22 +21,8 @@ func (s *Server) transferHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users, err := s.oplatiService.Transfer(r.Context(), request.UserIdFrom, request.UserIdTo, request.Amount)
+	err = s.oplatiService.Transfer(r.Context(), request.UserIdFrom, request.UserIdTo, request.Amount)
 
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	//будет потом изменено, но пока так
-	response := domain.UserInfo{
-		Id:      users[1].Id,
-		Name:    users[1].Name,
-		Balance: users[1].Balance,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(response)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

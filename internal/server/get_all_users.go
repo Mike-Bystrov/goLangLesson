@@ -12,7 +12,6 @@ type GetAllUsersResponse struct {
 }
 
 func (s *Server) getAllUsersHandler(w http.ResponseWriter, r *http.Request) {
-
 	users, err := s.oplatiService.GetAllUsers(r.Context())
 
 	response := GetAllUsersResponse{
