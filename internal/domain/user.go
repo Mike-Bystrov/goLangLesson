@@ -9,6 +9,5 @@ type UserInfo struct {
 }
 
 type ChangeBalanceRequest struct {
-	Id     uuid.UUID `json:"id"`
 	Amount int       `json:"amount"`
 }

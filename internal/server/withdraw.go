@@ -4,18 +4,28 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/thnxvlad/oplati/internal/domain"
+	"github.com/thnxvlad/oplati/internal/server/hmiddlewares"
 )
 
 func (s *Server) withdrawHandler(w http.ResponseWriter, r *http.Request) {
 	request := domain.ChangeBalanceRequest{}
+
+	accountId := r.Context().Value(hmiddlewares.AccountIdContextKey{}).(string)
+
+	if accountId == "" {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	ui, err := s.oplatiService.Withdraw(r.Context(), request.Id, request.Amount)
+	ui, err := s.oplatiService.Withdraw(r.Context(), uuid.MustParse(accountId), request.Amount)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -1,11 +1,8 @@
 package auth
 
 import (
-	"context"
 	"errors"
-	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -59,7 +56,7 @@ func Login(login, password string) (string, error) {
 	return generateToken(accountId)
 }
 
-func getAccountIdFromToken(token string) (string, error) {
+func GetAccountIdFromToken(token string) (string, error) {
 	claims, err := jwt.ParseWithClaims(token, &userClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(jwtSecret), nil
 	})
@@ -72,26 +69,4 @@ func getAccountIdFromToken(token string) (string, error) {
 		return "", errors.New("invalid claims type")
 	}
 	return parsedClaims.UserID, nil
-}
-
-type AccountIdContextKey struct{}
-
-func AuthMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := r.Header.Get("Authorization")
-		if token == "" {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
-		token = strings.TrimPrefix(token, "Bearer ")
-		accountId, err := getAccountIdFromToken(token)
-		if err != nil {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
-		ctx := context.WithValue(r.Context(), AccountIdContextKey{}, accountId)
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
 }
