@@ -17,7 +17,7 @@ type RegisterResponse struct {
 	Token string `json:"token"`
 }
 
-func (s *Server) RegisterHandler(w http.ResponseWriter, r http.Request) {
+func (s *Server) registerHandler(w http.ResponseWriter, r *http.Request) {
 	req := RegisterRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
 

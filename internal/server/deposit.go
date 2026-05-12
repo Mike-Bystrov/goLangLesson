@@ -11,6 +11,12 @@ import (
 
 func (s *Server) depositHandler(w http.ResponseWriter, r *http.Request) {
 	request := domain.ChangeBalanceRequest{}
+	err := json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+		http.Error(w, "invalid body", http.StatusBadRequest)
+	}
+	
 	accountId := r.Context().Value(hmiddlewares.AccountIdContextKey{}).(string)
 	
 	if accountId == ""{

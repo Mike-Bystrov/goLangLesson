@@ -11,17 +11,14 @@ import (
 
 func (s *Server) withdrawHandler(w http.ResponseWriter, r *http.Request) {
 	request := domain.ChangeBalanceRequest{}
-
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		http.Error(w, "invalid body", http.StatusBadRequest)
+	}
 	accountId := r.Context().Value(hmiddlewares.AccountIdContextKey{}).(string)
 
 	if accountId == "" {
 		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 

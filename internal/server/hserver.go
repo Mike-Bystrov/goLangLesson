@@ -41,8 +41,7 @@ func NewPublicServer(
 
 	mux.HandleFunc("POST /transfer", server.transferHandler)
 	mux.HandleFunc("POST /login", server.loginHandler)
-	mux.HandleFunc("POST /deposit", server.depositHandler)
-	mux.HandleFunc("POST /withdraw", server.withdrawHandler)
+	mux.HandleFunc("POST /register", server.registerHandler)
 	mux.HandleFunc("POST /getInfo/{id}", server.getInfoHandler)
 
 	return server
@@ -56,6 +55,9 @@ func NewPrivateServer(
 	server, mux := NewServer(oplatiService, addr, mws...)
 
 	mux.HandleFunc("POST /getAllUsers", server.getAllUsersHandler)
+	mux.HandleFunc("POST /deposit", server.depositHandler)
+	mux.HandleFunc("POST /withdraw", server.withdrawHandler)
+
 
 	return server
 }

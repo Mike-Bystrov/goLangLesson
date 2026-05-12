@@ -59,7 +59,7 @@ func Login(login, password string) (string, error) {
 func SignUp(login, password, userId string) error {
 	_, exists := loginData[login]
 
-	if !exists {
+	if exists {
 		return errors.New("login already exists")
 	}
 
