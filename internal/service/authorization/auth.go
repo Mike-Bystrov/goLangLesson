@@ -50,10 +50,23 @@ func Login(login, password string) (string, error) {
 
 	accountId, ok := accountData[login]
 	if !ok {
-		return "", errors.New("accout not found")
+		return "", errors.New("account not found")
 	}
 
 	return generateToken(accountId)
+}
+
+func SignUp(login, password, userId string) error {
+	_, exists := loginData[login]
+
+	if !exists {
+		return errors.New("login already exists")
+	}
+
+	loginData[login] = password
+	accountData[login] = userId
+
+	return nil
 }
 
 func GetAccountIdFromToken(token string) (string, error) {

@@ -40,7 +40,7 @@ func NewPublicServer(
 	server, mux := NewServer(oplatiService, addr, mws...)
 
 	mux.HandleFunc("POST /transfer", server.transferHandler)
-	mux.HandleFunc("POST /newUser", server.newUserHandler)
+	mux.HandleFunc("POST /login", server.loginHandler)
 	mux.HandleFunc("POST /deposit", server.depositHandler)
 	mux.HandleFunc("POST /withdraw", server.withdrawHandler)
 	mux.HandleFunc("POST /getInfo/{id}", server.getInfoHandler)

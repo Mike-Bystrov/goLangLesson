@@ -24,7 +24,6 @@ type OplatiDatabase interface {
 	Transfer(ctx context.Context, userIDFirst uuid.UUID, userIDSecond uuid.UUID, amount int) error
 	Deposit(ctx context.Context, userId uuid.UUID, amount int) (domain.UserInfo, error)
 	Withdraw(ctx context.Context, userId uuid.UUID, amount int) (domain.UserInfo, error)
-
 }
 
 func (s *Service) CreateUser(ctx context.Context, name string) (domain.UserInfo, error) {

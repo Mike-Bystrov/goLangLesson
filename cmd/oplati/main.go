@@ -29,8 +29,8 @@ func init() {
 
 func main() {
 	oplatiService := oplati.New(inmemory.NewStorage())
-	publicServer := hserver.NewPublicServer(oplatiService, publicAddr, hmiddlewares.LoggingMiddleware)
-	privateServer := hserver.NewPrivateServer(oplatiService, privateAddr, hmiddlewares.LoggingMiddleware)
+	publicServer := hserver.NewPublicServer(oplatiService, publicAddr, hmiddlewares.LoggingMiddleware, hmiddlewares.AuthMiddleware)
+	privateServer := hserver.NewPrivateServer(oplatiService, privateAddr, hmiddlewares.LoggingMiddleware, hmiddlewares.AuthMiddleware)
 
 	go func() {
 		log.Info().Str("addr", publicAddr).Msg("public server started...")
