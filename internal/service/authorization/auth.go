@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
+
 )
 
 var jwtSecret = os.Getenv("JWT_SECRET")
@@ -40,7 +42,12 @@ var accountData = map[string]string{
 }
 
 func validateLogin(login, password string) bool {
-	return password == loginData[login]
+	hashedPassword, ok := loginData[login]
+	if !ok {
+		return false
+	}
+	err := bcrypt.CompareHashAndPassword([]byte(password), []byte(hashedPassword))
+	return err == nil
 }
 
 func Login(login, password string) (string, error) {
@@ -62,8 +69,12 @@ func SignUp(login, password, userId string) error {
 	if exists {
 		return errors.New("login already exists")
 	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
 
-	loginData[login] = password
+	loginData[login] = string(hashedPassword)
 	accountData[login] = userId
 
 	return nil

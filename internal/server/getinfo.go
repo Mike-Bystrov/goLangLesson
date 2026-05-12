@@ -6,18 +6,17 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/thnxvlad/oplati/internal/domain"
+	"github.com/thnxvlad/oplati/internal/server/hmiddlewares"
 )
 
 func (s *Server) getInfoHandler(w http.ResponseWriter, r *http.Request) {
-	idStr := r.PathValue("id")
-	id, err := uuid.Parse(idStr)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	accountId := r.Context().Value(hmiddlewares.AccountIdContextKey{}).(string)
+	if accountId == "" {
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	ui, err := s.oplatiService.GetUser(r.Context(), id)
+	ui, err := s.oplatiService.GetUser(r.Context(), uuid.MustParse(accountId))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
