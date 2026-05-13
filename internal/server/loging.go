@@ -4,37 +4,34 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/google/uuid"
+	auth "github.com/thnxvlad/oplati/internal/service/authorization"
 )
 
-type NewUserRequest struct {
-	Name string `json:"name"`
+type LoginRequest struct {
+	Login    string `json:"login"`
+	Password string `json:"password"`
 }
 
 type NewUserResponse struct {
-	Id      uuid.UUID `json:"id"`
-	Name    string    `json:"name"`
-	Balance int       `json:"balance"`
+	Token string `json:"token"`
 }
 
-func (s *Server) newUserHandler(w http.ResponseWriter, r *http.Request) {
-	request := NewUserRequest{}
+func (s *Server) loginHandler(w http.ResponseWriter, r *http.Request) {
+	request := LoginRequest{}
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	ui, err := s.oplatiService.CreateUser(r.Context(), request.Name)
-	if err != nil {
+	token, err := auth.Login(request.Login, request.Password)
+	if err != nil || token == "" {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	response := NewUserResponse{
-		Id:      ui.Id,
-		Name:    ui.Name,
-		Balance: ui.Balance,
+		Token: token,
 	}
 
 	w.Header().Set("Content-Type", "application/json")

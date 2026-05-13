@@ -12,26 +12,11 @@ type Server struct {
 	*http.Server
 }
 
-func NewPublicServer(
+func NewServer(
 	oplatiService *oplati.Service,
 	addr string,
 	mws ...func(next http.Handler) http.Handler,
-) *Server {
-	//  TODO: пополнить баланс
-	//  TODO: просмотреть информацию о конкретном пользователе по id
-	//  TODO: снять деньги с баланса
-	//  TODO: перевести сумму денег с одного пользователя на другой
-
-	// TODO: доделать public server
-
-	return &Server{}
-}
-
-func NewPrivateServer(
-	oplatiService *oplati.Service,
-	addr string,
-	mws ...func(next http.Handler) http.Handler,
-) *Server {
+) (*Server, *http.ServeMux) {
 	mux := http.NewServeMux()
 
 	httpServer := http.Server{
@@ -44,8 +29,34 @@ func NewPrivateServer(
 		Server:        &httpServer,
 	}
 
-	mux.HandleFunc("POST /newUser", server.newUserHandler)
-	//  TODO: просмотреть информацию о всех пользователях
+	return server, mux
+}
+
+func NewPublicServer(
+	oplatiService *oplati.Service,
+	addr string,
+	mws ...func(next http.Handler) http.Handler,
+) *Server {
+	server, mux := NewServer(oplatiService, addr, mws...)
+
+	mux.HandleFunc("POST /login", server.loginHandler)
+	mux.HandleFunc("POST /register", server.registerHandler)
+
+	return server
+}
+
+func NewPrivateServer(
+	oplatiService *oplati.Service,
+	addr string,
+	mws ...func(next http.Handler) http.Handler,
+) *Server {
+	server, mux := NewServer(oplatiService, addr, mws...)
+
+	mux.HandleFunc("POST /getAllUsers", server.getAllUsersHandler)
+	mux.HandleFunc("POST /deposit", server.depositHandler)
+	mux.HandleFunc("POST /withdraw", server.withdrawHandler)
+	mux.HandleFunc("POST /getInfo", server.getInfoHandler)
+	mux.HandleFunc("POST /transfer", server.transferHandler)
 
 	return server
 }
