@@ -28,7 +28,6 @@ func (s *Server) transferHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = s.oplatiService.Transfer(r.Context(), uuid.MustParse(accountId), request.UserIdTo, request.Amount)
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -70,7 +70,6 @@ func (s *Service) GetUser(ctx context.Context, userId uuid.UUID) (domain.UserInf
 
 func (s *Service) GetAllUsers(ctx context.Context) ([]domain.UserInfo, error) {
 	users, err := s.db.GetAllUsers(ctx)
-
 	if err != nil {
 		return []domain.UserInfo{}, err
 	}
@@ -80,7 +79,6 @@ func (s *Service) GetAllUsers(ctx context.Context) ([]domain.UserInfo, error) {
 
 func (s *Service) Transfer(ctx context.Context, userIDFirst uuid.UUID, userIDSecond uuid.UUID, amount int) error {
 	err := s.db.Transfer(ctx, userIDFirst, userIDSecond, amount)
-
 	if err != nil {
 		return err
 	}

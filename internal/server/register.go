@@ -20,14 +20,12 @@ type RegisterResponse struct {
 func (s *Server) registerHandler(w http.ResponseWriter, r *http.Request) {
 	req := RegisterRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	user, err1 := s.oplatiService.CreateUser(r.Context(), req.Name)
-
 	if err1 != nil {
 		http.Error(w, err1.Error(), http.StatusInternalServerError)
 		return

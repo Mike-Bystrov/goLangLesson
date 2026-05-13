@@ -16,14 +16,12 @@ func (s *Server) withdrawHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "invalid body", http.StatusBadRequest)
 	}
 	accountId := r.Context().Value(hmiddlewares.AccountIdContextKey{}).(string)
-
 	if accountId == "" {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
 	ui, err := s.oplatiService.Withdraw(r.Context(), uuid.MustParse(accountId), request.Amount)
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

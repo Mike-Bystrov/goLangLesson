@@ -23,7 +23,6 @@ func NewStorage() *Storage {
 func (s *Storage) CreateUser(ctx context.Context, ui domain.UserInfo) error {
 	s.Lock()
 	defer s.Unlock()
-
 	if _, ok := s.db[ui.Id]; ok {
 		return errors.New("id already exists")
 	}
@@ -96,7 +95,6 @@ func (s *Storage) Transfer(ctx context.Context, userIDFrom uuid.UUID, userIDTo u
 
 	ui1, ok1 := s.db[userIDFrom]
 	ui2, ok2 := s.db[userIDTo]
-
 	if !ok1 {
 		return errors.New("there is no user with id: " + userIDFrom.String())
 	}

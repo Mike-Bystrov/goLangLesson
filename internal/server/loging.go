@@ -19,7 +19,6 @@ type NewUserResponse struct {
 func (s *Server) loginHandler(w http.ResponseWriter, r *http.Request) {
 	request := LoginRequest{}
 	err := json.NewDecoder(r.Body).Decode(&request)
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -37,7 +36,6 @@ func (s *Server) loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(response)
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

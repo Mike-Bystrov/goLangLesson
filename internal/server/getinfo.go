@@ -17,7 +17,6 @@ func (s *Server) getInfoHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ui, err := s.oplatiService.GetUser(r.Context(), uuid.MustParse(accountId))
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
